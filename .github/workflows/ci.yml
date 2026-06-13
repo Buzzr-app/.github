@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate YAML
+        run: |
+          ruby -e 'require "yaml"; ARGV.each { |path| YAML.load_file(path); puts "valid #{path}" }' \
+            .github/dependabot.yml \
+            .github/ISSUE_TEMPLATE/bug_report.yml \
+            .github/ISSUE_TEMPLATE/task.yml
+
+      - name: Validate community health files
+        run: |
+          test -s SECURITY.md
+          test -s CONTRIBUTING.md
+          test -s .github/PULL_REQUEST_TEMPLATE.md
